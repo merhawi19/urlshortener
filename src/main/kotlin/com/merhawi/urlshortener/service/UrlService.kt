@@ -23,12 +23,12 @@ class UrlService(private val repo: UrlRepository,
      */
     @Transactional
     fun createShortUrl(request: ShortenRequest): UrlDto {
-        val shortCodeWithDB = ShortCodeGenerator. iDgenerate(repo)
+        //val shortCodeWithDB = ShortCodeGenerator. iDgenerate(repo)
         val shortcodeWithInMemory = InMemoryShortCodeGenerator.generateUniqueCode(repo)
-        val shortCodeWithRedis = redisShortCodeGenerator.generateAndReserve(request.originalUrl)
+        //val shortCodeWithRedis = redisShortCodeGenerator.generateAndReserve(request.originalUrl)
         val url = Url(
             originalUrl = request.originalUrl,
-            shortCode = shortCodeWithRedis
+            shortCode = shortcodeWithInMemory
         )
         return repo.save(url).toDto()
     }
@@ -39,6 +39,8 @@ class UrlService(private val repo: UrlRepository,
 
     fun getOriginalUrl(shortCode: String): UrlDto? =
         getOriginalUrlEntity(shortCode)?.let { it.toDto() }
+
+
 
        fun invalidateCache(shortCode: String) {
         logger.info("Cache invalidated for short code: $shortCode")
