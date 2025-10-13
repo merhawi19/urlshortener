@@ -102,6 +102,23 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+        <!--- othrer  -->
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>dotenv-java</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>5.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>3.1.8</version>
+        </dependency>
+
 
 
     </dependencies>
@@ -110,13 +127,12 @@
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 
         <plugins>
-            <!-- Spring Boot Plugin -->
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!-- Kotlin Plugin -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -141,11 +157,9 @@
 
                 <configuration>
                     <args>
-                        <!-- Required for Spring Boot annotations -->
                         <arg>-Xjsr305=strict</arg>
                     </args>
 
-                    <!-- Enable Kotlin compiler plugins for Spring + JPA -->
                     <compilerPlugins>
                         <plugin>spring</plugin>
                         <plugin>jpa</plugin>

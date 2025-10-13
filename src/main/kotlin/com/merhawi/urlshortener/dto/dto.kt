@@ -1,6 +1,8 @@
 package com.merhawi.urlshortener.dto
 
 import com.merhawi.urlshortener.model.enums.UrlState
+import jakarta.validation.constraints.NotBlank
+import org.hibernate.validator.constraints.URL
 import java.time.Instant
 
 // ========== Category DTOs ==========
@@ -38,20 +40,17 @@ data class UrlDto(
 )
 
 data class ShortenRequest(
+    @field:NotBlank(message = "Original URL must not be blank")
+    @field:URL(message = "Original URL must be a valid URL")
+    @field:URL(message = "Original URL must be a valid URL")
     val originalUrl: String,
     val categoryId: Long? = null,
     val expirationTime: Instant? = null
 )
 
 data class ShortenResponse(
+
     val shortCode: String,
     val originalUrl: String
 )
 
-data class UpdateUrlRequest(
-    val id: Long,
-    val originalUrl: String,
-    val status: UrlState?,
-    val categoryId: Long?,
-    val expirationTime: Instant?
-)
