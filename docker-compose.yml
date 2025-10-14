@@ -22,7 +22,7 @@ services:
     image: redis:7
     container_name: urlshortener-redis
     ports:
-      - "6380:6379" # external 6380 -> internal 6379
+      - "6380:6379" # host 6380 → container 6379
     command: ["redis-server", "--appendonly", "yes"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]

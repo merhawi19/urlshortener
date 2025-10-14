@@ -7,6 +7,7 @@ import com.merhawi.urlshortener.mapper.toDto
 import com.merhawi.urlshortener.model.Url
 import com.merhawi.urlshortener.utils.InMemoryShortCodeGenerator
 import com.merhawi.urlshortener.utils.RedisShortCodeGenerator
+import com.merhawi.urlshortener.utils.ShortCodeGenerator
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
@@ -25,10 +26,10 @@ class UrlService(private val repo: UrlRepository,
     fun createShortUrl(request: ShortenRequest): UrlDto {
         //val shortCodeWithDB = ShortCodeGenerator. iDgenerate(repo)
         val shortcodeWithInMemory = InMemoryShortCodeGenerator.generateUniqueCode(repo)
-        //val shortCodeWithRedis = redisShortCodeGenerator.generateAndReserve(request.originalUrl)
+        val shortCodeWithRedis = redisShortCodeGenerator.generateAndReserve(request.originalUrl)
         val url = Url(
             originalUrl = request.originalUrl,
-            shortCode = shortcodeWithInMemory
+            shortCode = shortCodeWithRedis
         )
         return repo.save(url).toDto()
     }
@@ -39,8 +40,6 @@ class UrlService(private val repo: UrlRepository,
 
     fun getOriginalUrl(shortCode: String): UrlDto? =
         getOriginalUrlEntity(shortCode)?.let { it.toDto() }
-
-
 
        fun invalidateCache(shortCode: String) {
         logger.info("Cache invalidated for short code: $shortCode")

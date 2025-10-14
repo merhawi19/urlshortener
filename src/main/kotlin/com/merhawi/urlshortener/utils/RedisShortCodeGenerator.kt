@@ -88,7 +88,7 @@ class RedisShortCodeGenerator(
     private fun base62FromBytes(bytes: ByteArray, bits: Int): String {
         val totalBytes = (bits + 7) / 8
         val buffer = ByteBuffer.allocate(totalBytes + 1)
-        buffer.put(0) // ensure positive BigInteger
+        buffer.put(0)
         buffer.put(bytes.copyOf(totalBytes))
         val mag = buffer.array()
 

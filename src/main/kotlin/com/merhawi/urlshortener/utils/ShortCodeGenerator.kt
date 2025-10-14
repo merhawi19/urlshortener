@@ -1,8 +1,7 @@
-package com.merhawi.urlshortener.service
+package com.merhawi.urlshortener.utils
 
 import com.merhawi.urlshortener.Repository.UrlRepository
 import java.security.SecureRandom
-
 
 object ShortCodeGenerator {
 
@@ -20,7 +19,6 @@ object ShortCodeGenerator {
         RANDOM.nextBytes(bytes)
         val result = CharArray(length)
         for (i in bytes.indices) {
-            // Mask to positive range & map to alphabet
             result[i] = BASE_ALPHABET[(bytes[i].toInt() and 0xFF) % alphabetSize]
         }
         return String(result)
