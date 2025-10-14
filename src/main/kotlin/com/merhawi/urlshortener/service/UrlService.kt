@@ -28,9 +28,9 @@ class UrlService(private val repo: UrlRepository,
  try {
 
 
-            //val shortCodeWithDB = ShortCodeGenerator.iDgenerate(repo)  <--
+            //val shortCodeWithDB = ShortCodeGenerator.idGenerate(repo)  <-- enable to use ShortCodeGenerator
              val shortcodeWithInMemory = InMemoryShortCodeGenerator.generateUniqueCode(repo)
-            //val shortCodeWithRedis = redisShortCodeGenerator.generateAndReserve(request.originalUrl)
+            //val shortCodeWithRedis = redisShortCodeGenerator.generateAndReserve(request.originalUrl) <-- enable to use shortCodeWithRedis
             val url = Url(
                 originalUrl = request.originalUrl,
                 shortCode = shortcodeWithInMemory
