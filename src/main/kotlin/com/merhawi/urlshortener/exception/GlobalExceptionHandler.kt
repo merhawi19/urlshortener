@@ -40,4 +40,14 @@ class GlobalExceptionHandler {
                 "message" to ex.localizedMessage
             )
         )
+    @ExceptionHandler(UrlShorteningException::class)
+    fun handleUrlShorteningError(ex: UrlShorteningException): ResponseEntity<Map<String, Any>> =
+        ResponseEntity.status(HttpStatus.CONFLICT).body(
+            mapOf(
+                "status" to 409,
+                "error" to "Short URL Creation Failed",
+                "message" to (ex.message ?: "Unknown error occurred while creating short URL.")
+            )
+        )
+
 }

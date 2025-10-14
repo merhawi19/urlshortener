@@ -1,4 +1,4 @@
-package com.merhawi.urlshortener.Repository
+package com.merhawi.urlshortener.repository
 
 import com.merhawi.urlshortener.model.Url
 import com.merhawi.urlshortener.model.enums.UrlState

@@ -12,7 +12,7 @@ import java.time.Instant
 class Url(){
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long ?= null
+    var id: Long ?= null
 
     @Column(nullable = false, length = 2048)
     lateinit var originalUrl: String
@@ -28,43 +28,34 @@ class Url(){
     @Column(nullable = true)
     var expirationTime: Instant? = null
 
-    @Column(nullable = true)
-    var updatedBy: String? = null
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    var category: Category? = null
 
     constructor(originalUrl: String, shortCode: String) : this() {
         this.originalUrl = originalUrl
         this.shortCode = shortCode
     }
-
-    constructor(originalUrl: String, shortCode: String, category: Category? = null) : this() {
+    constructor(id: Long, originalUrl: String, shortCode: String) : this() {
+        this.id = id          // ✅ fixed — now sets the class property
         this.originalUrl = originalUrl
         this.shortCode = shortCode
-        this.category = category
     }
+
 
     constructor(
         originalUrl: String,
         shortCode: String,
-        category: Category,
         expirationTime: Instant? = null
     ) : this() {
         this.originalUrl = originalUrl
         this.shortCode = shortCode
-        this.category = category
         this.expirationTime = expirationTime
     }
 
     constructor(
         originalUrl: String,
-        category: Category,
         expirationTime: Instant? = null
     ) : this() {
         this.originalUrl = originalUrl
-        this.category = category
         this.expirationTime = expirationTime
     }
 

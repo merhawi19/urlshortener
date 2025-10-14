@@ -1,6 +1,6 @@
 package com.merhawi.urlshortener.utils
 
-import com.merhawi.urlshortener.Repository.UrlRepository
+import com.merhawi.urlshortener.repository.UrlRepository
 import java.security.SecureRandom
 
 object ShortCodeGenerator {
@@ -24,7 +24,7 @@ object ShortCodeGenerator {
         return String(result)
     }
 
-    fun iDgenerate(repo: UrlRepository, maxAttempts: Int = MAX_ATTEMPTS): String {
+    fun idGenerate(repo: UrlRepository, maxAttempts: Int = MAX_ATTEMPTS): String {
         repeat(maxAttempts) { attempt ->
             val codeLength = DEFAULT_LENGTH + (attempt / LENGTH_INCREMENT_STEP)
             val code = generate(codeLength)

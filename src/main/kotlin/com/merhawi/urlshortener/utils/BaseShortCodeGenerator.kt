@@ -1,7 +1,7 @@
 package com.merhawi.urlshortener.utils
 
 
-import com.merhawi.urlshortener.Repository.UrlRepository
+import com.merhawi.urlshortener.repository.UrlRepository
 import java.security.SecureRandom
 
 abstract class BaseShortCodeGenerator {

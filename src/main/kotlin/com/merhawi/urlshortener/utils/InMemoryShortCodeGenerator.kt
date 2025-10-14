@@ -1,7 +1,7 @@
 package com.merhawi.urlshortener.utils
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.merhawi.urlshortener.Repository.UrlRepository
+import com.merhawi.urlshortener.repository.UrlRepository
 import java.time.Duration
 
 object InMemoryShortCodeGenerator : BaseShortCodeGenerator() {

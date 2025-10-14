@@ -1,4 +1,4 @@
-package com.merhawi.urlshortener.Controller
+package com.merhawi.urlshortener.controller
 
 import com.merhawi.urlshortener.dto.ShortenRequest
 import com.merhawi.urlshortener.dto.ShortenResponse
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*
 import java.net.URI
 
 @RestController
-@RequestMapping("/api/url")
+@RequestMapping("/api")
 @Validated
 class UrlController(
     private val urlService: UrlService,
@@ -50,7 +50,6 @@ class UrlController(
             ResponseEntity.notFound().build()
         }
     }
-
 
     /** API to get info about a short URL (optional) */
     @GetMapping("/info/{shortCode}")
