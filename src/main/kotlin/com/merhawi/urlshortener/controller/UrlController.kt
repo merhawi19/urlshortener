@@ -26,6 +26,8 @@ class UrlController(
     @PostMapping("/shorten")
     fun createShortUrl(@Valid @RequestBody request: ShortenRequest): ResponseEntity<ShortenResponse> {
         val url = urlService.createShortUrl(request )
+        print("saved")
+        print(url.shortCode)
 
         val shortUrl = "$baseUrl/${url.shortCode}"
         val response = ShortenResponse(

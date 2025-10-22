@@ -8,6 +8,13 @@ spring:
     password: ${DB_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
 
+    hikari:
+      maximum-pool-size: 10
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      keepalive-time: 30000
+
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,3 +25,17 @@ server:
 
 app:
   base-url: https://short.ly
+shortcode:
+  generator: inmemory   # simple  # or redis /
+  length: 7
+  increment-step: 20
+  alphabet: "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  redis:
+    ttl-ms: 10000
+    bit-length: 48
+  mac-algorithm: HmacSHA256
+  reservation:
+    prefix: shortcode
+    ttl-ms: 10000
+  hmac:
+    key: my-secret-key-123

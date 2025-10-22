@@ -1,11 +1,12 @@
 package com.merhawi.urlshortener.repository
 
 import com.merhawi.urlshortener.model.Url
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.dao.DataIntegrityViolationException
 
 @DataJpaTest
@@ -21,8 +22,8 @@ class UrlRepositoryTest @Autowired constructor(
 
         val found = repo.findByShortCode("abc123")
 
-        assertThat(found).isNotNull()
-        assertThat(found?.originalUrl).isEqualTo("https://example.com")
+        Assertions.assertThat(found).isNotNull()
+        Assertions.assertThat(found?.originalUrl).isEqualTo("https://example.com")
     }
 
     @Test
@@ -32,7 +33,7 @@ class UrlRepositoryTest @Autowired constructor(
 
         repo.save(url1)
 
-        org.junit.jupiter.api.assertThrows<DataIntegrityViolationException> {
+        assertThrows<DataIntegrityViolationException> {
             repo.saveAndFlush(url2)
         }
     }

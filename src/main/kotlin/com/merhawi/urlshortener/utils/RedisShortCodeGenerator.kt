@@ -11,29 +11,22 @@ import java.time.Duration
 import java.math.BigInteger
 
 /**
- * HMAC + Base62 short code generator with Redis reservation fallback.
- *
- * - Deterministic per original URL (same input → same code)
- * - Very low collision probability (96 bits )
- * - Uses Redis for temporary reservation to avoid concurrent duplicates
+ * Deterministic, HMAC-based short code generator with Redis reservation.
+ * Ensures cross-instance uniqueness and concurrency safety.
  */
 @Component
 class RedisShortCodeGenerator(
     private val redisTemplate: StringRedisTemplate
-) {
-    // === Configuration ===
+) : BaseShortCodeGeneratorOld<String>() {
+
     private val bitLength = 48 // ≈17 base62 chars
-    private val reservationTtlMs = 10_000L // Redis reservation TTL
-    private val base62Alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    private val base = base62Alphabet.length
-
-    // Secret key for HMAC
-    private val secretKey: ByteArray = System.getenv("SHORTCODE_HMAC_KEY")?.toByteArray()
-        ?: SecureRandom().run {
-            ByteArray(32).also { nextBytes(it) }
-        }
-
+    private val reservationTtlMs = 10_000L
     private val macAlgorithm = "HmacSHA256"
+    private val base = BASE_ALPHABET.length
+
+    private val secretKey: ByteArray = System.getenv("SHORTCODE_HMAC_KEY")?.toByteArray()
+        ?: SecureRandom().run { ByteArray(32).also { nextBytes(it) } }
+
     private lateinit var macPrototype: Mac
 
     @PostConstruct
@@ -43,31 +36,25 @@ class RedisShortCodeGenerator(
         macPrototype.init(keySpec)
     }
 
-    /**
-     * Generate and temporarily reserve a short code for the given URL.
-     * Ensures no collision by reserving in Redis before returning.
-     */
-    fun generateAndReserve(originalUrl: String): String {
-        val digest = hmacSha256(originalUrl)
+    override fun generateUniqueCode(source: String, maxAttempts: Int): String {
+        val digest = hmacSha256(source)
         val bytesNeeded = (bitLength + 7) / 8
         val maxWindowStart = digest.size - bytesNeeded
 
-        // Try deterministic slices of digest
         for (start in 0..maxWindowStart) {
             val slice = digest.copyOfRange(start, start + bytesNeeded)
             val code = base62FromBytes(slice, bitLength)
             if (tryReserve(code)) return code
         }
 
-        // Fallback: counter-based HMAC
-        for (counter in 1..1000) {
-            val digest2 = hmacSha256("$originalUrl::$counter")
+        for (counter in 1..maxAttempts) {
+            val digest2 = hmacSha256("$source::$counter")
             val slice = digest2.copyOfRange(0, bytesNeeded)
             val code = base62FromBytes(slice, bitLength)
             if (tryReserve(code)) return code
         }
 
-        throw IllegalStateException("Failed to generate unique short code after multiple attempts")
+        throw IllegalStateException("Failed to generate unique short code after $maxAttempts attempts")
     }
 
     private fun tryReserve(code: String): Boolean {
@@ -81,7 +68,7 @@ class RedisShortCodeGenerator(
     }
 
     private fun hmacSha256(data: String): ByteArray {
-        val mac = macPrototype.clone() as Mac // thread-safe clone
+        val mac = macPrototype.clone() as Mac
         return mac.doFinal(data.toByteArray(Charsets.UTF_8))
     }
 
@@ -97,13 +84,12 @@ class RedisShortCodeGenerator(
         if (shift > 0) value = value.shiftRight(shift)
 
         val sb = StringBuilder()
-        if (value == BigInteger.ZERO) sb.append(base62Alphabet[0])
+        if (value == BigInteger.ZERO) sb.append(BASE_ALPHABET[0])
         while (value > BigInteger.ZERO) {
             val (div, rem) = value.divideAndRemainder(BigInteger.valueOf(base.toLong()))
-            sb.append(base62Alphabet[rem.toInt()])
+            sb.append(BASE_ALPHABET[rem.toInt()])
             value = div
         }
         return sb.reverse().toString()
     }
 }
-

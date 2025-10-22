@@ -3,7 +3,6 @@ package com.merhawi.urlshortener.model
 import com.merhawi.urlshortener.model.enums.UrlState
 import jakarta.persistence.*
 import java.time.Instant
-
 @Entity
 @Table(
     name = "urls",
@@ -28,18 +27,15 @@ class Url(){
     @Column(nullable = true)
     var expirationTime: Instant? = null
 
-
-
     constructor(originalUrl: String, shortCode: String) : this() {
         this.originalUrl = originalUrl
         this.shortCode = shortCode
     }
     constructor(id: Long, originalUrl: String, shortCode: String) : this() {
-        this.id = id          // ✅ fixed — now sets the class property
+        this.id = id
         this.originalUrl = originalUrl
         this.shortCode = shortCode
     }
-
 
     constructor(
         originalUrl: String,
@@ -58,5 +54,4 @@ class Url(){
         this.originalUrl = originalUrl
         this.expirationTime = expirationTime
     }
-
 }

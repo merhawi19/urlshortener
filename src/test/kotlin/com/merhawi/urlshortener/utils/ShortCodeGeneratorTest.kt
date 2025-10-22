@@ -2,36 +2,48 @@ package com.merhawi.urlshortener.utils
 
 import com.merhawi.urlshortener.model.Url
 import com.merhawi.urlshortener.repository.UrlRepository
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.kotlin.*
+import org.mockito.kotlin.any
+import org.mockito.kotlin.atLeast
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 class ShortCodeGeneratorTest {
 
+    private lateinit var repo: UrlRepository
+
+    @BeforeEach
+    fun setup() {
+        repo = mock<UrlRepository>()
+    }
     @Test
     fun `should generate mostly unique short codes`() {
-        val codes = (1..1000).map { ShortCodeGenerator.generate() }
+        val codes = (1..1000).map { ShortCodeGenerator.generateUniqueCode(repo,100) }
         val uniqueCount = codes.toSet().size
-        assertTrue(uniqueCount > 990, "Expected >990 unique codes but got $uniqueCount")
+        Assertions.assertTrue(uniqueCount > 990, "Expected >990 unique codes but got $uniqueCount")
     }
 
     @Test
     fun `should generate alphanumeric codes of default length`() {
-        val code = ShortCodeGenerator.generate()
-        assertEquals(7, code.length, "Default short code length should be 7")
-        assertTrue(code.all { it.isLetterOrDigit() }, "Code must be alphanumeric")
+        val code = ShortCodeGenerator.generateUniqueCode(repo,100)
+        Assertions.assertEquals(7, code.length, "Default short code length should be 7")
+        Assertions.assertTrue(code.all { it.isLetterOrDigit() }, "Code must be alphanumeric")
     }
 
     @Test
     fun `should generate unique code not existing in repository`() {
-        val repo = mock<UrlRepository>()
+
         whenever(repo.findByShortCode(any())).thenReturn(null)
 
-        val code = ShortCodeGenerator.idGenerate(repo)
+        val code = ShortCodeGenerator.generateUniqueCode(repo,100)
 
-        assertNotNull(code)
-        assertEquals(7, code.length)
+        Assertions.assertNotNull(code)
+        Assertions.assertEquals(7, code.length)
     }
 
     @Test
@@ -45,10 +57,10 @@ class ShortCodeGeneratorTest {
             .thenReturn(Url("https://example.com", "dup3"))
             .thenReturn(null)
 
-        val code = ShortCodeGenerator.idGenerate(repo)
+        val code = ShortCodeGenerator.generateUniqueCode(repo,100)
 
-        assertNotNull(code)
-        assertEquals(7, code.length)
+        Assertions.assertNotNull(code)
+        Assertions.assertEquals(7, code.length)
         verify(repo, atLeast(4)).findByShortCode(any())
     }
 
@@ -60,10 +72,11 @@ class ShortCodeGeneratorTest {
         whenever(repo.findByShortCode(any())).thenReturn(Url("https://example.com", "dup"))
 
         val exception = assertThrows<IllegalStateException> {
-            ShortCodeGenerator.idGenerate(repo, maxAttempts = 5)
+            ShortCodeGenerator.generateUniqueCode(repo, 5)
+            //ShortCodeGenerator.idGenerate(repo, maxAttempts = 5)
         }
 
-        assertEquals(
+        Assertions.assertEquals(
             "Failed to generate unique short code after 5 attempts",
             exception.message
         )
@@ -71,4 +84,3 @@ class ShortCodeGeneratorTest {
         verify(repo, times(5)).findByShortCode(any())
     }
 }
-

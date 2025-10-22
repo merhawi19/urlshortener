@@ -2,12 +2,17 @@ package com.merhawi.urlshortener.utils
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.*
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.data.redis.core.ValueOperations
-import kotlin.test.assertNotNull
-import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNotNull
 
 class RedisShortCodeGeneratorTest {
 
@@ -27,7 +32,7 @@ class RedisShortCodeGeneratorTest {
     @Test
     fun `should generate and reserve unique short code`() {
         whenever(valueOps.setIfAbsent(any(), any())).thenReturn(true)
-        val code = generator.generateAndReserve("https://example.com/test")
+        val code = generator.generateUniqueCode("https://example.com/test")
 
         assertNotNull(code)
 
@@ -43,7 +48,7 @@ class RedisShortCodeGeneratorTest {
         // simulate first few reservations fail
         whenever(valueOps.setIfAbsent(any(), any()))
             .thenReturn(false, false, true)
-        val code = generator.generateAndReserve("https://example.com/multi")
+        val code = generator.generateUniqueCode("https://example.com/multi")
         assertNotNull(code)
     }
 
@@ -51,7 +56,7 @@ class RedisShortCodeGeneratorTest {
     fun `should throw if all attempts exhausted`() {
         whenever(valueOps.setIfAbsent(any(), any())).thenReturn(false)
         assertFailsWith<IllegalStateException> {
-            generator.generateAndReserve("https://example.com/fail")
+            generator.generateUniqueCode("https://example.com/fail")
         }
     }
 }

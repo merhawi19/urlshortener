@@ -1,16 +1,16 @@
 package com.merhawi.urlshortener.utils
 
-
-import com.merhawi.urlshortener.repository.UrlRepository
 import java.security.SecureRandom
 
-abstract class BaseShortCodeGenerator {
+/**
+ * Abstract base for all short code generators.
+ * Provides a common alphabet and random code generator.
+ */
+abstract class BaseShortCodeGeneratorOld<T>() {
 
     companion object {
-        private const val BASE_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        const val BASE_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         private const val DEFAULT_LENGTH = 7
-        private const val LENGTH_INCREMENT_STEP = 20
-
         private val RANDOM = SecureRandom()
         private val ALPHABET_SIZE = BASE_ALPHABET.length
 
@@ -25,5 +25,5 @@ abstract class BaseShortCodeGenerator {
         }
     }
 
-    abstract fun generateUniqueCode(repo: UrlRepository, maxAttempts: Int = 100): String
+    abstract fun generateUniqueCode(source: T, maxAttempts: Int = 100): String
 }
