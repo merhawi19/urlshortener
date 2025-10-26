@@ -26,7 +26,7 @@ server:
 app:
   base-url: https://short.ly
 shortcode:
-  generator: inmemory   # simple  # or redis /
+  generator: redis # / inmemory   # / simple
   length: 7
   increment-step: 20
   alphabet: "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

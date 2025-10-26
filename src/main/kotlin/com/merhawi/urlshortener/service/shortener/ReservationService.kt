@@ -27,7 +27,12 @@ class ReservationService(
         val success = redisTemplate.opsForValue().setIfAbsent(key, "RESERVED")
         if (success == true) {
             redisTemplate.expire(key, Duration.ofMillis(ttlMs))
-            return true
+            return try {
+                true
+            } catch (e: Exception) {
+                redisTemplate.delete(key)
+                false
+            }
         }
         return false
     }

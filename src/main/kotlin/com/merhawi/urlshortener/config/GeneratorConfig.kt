@@ -1,7 +1,6 @@
 package com.merhawi.urlshortener.config
 
 
-import com.merhawi.urlshortener.utils.ShortCodeGenerator
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

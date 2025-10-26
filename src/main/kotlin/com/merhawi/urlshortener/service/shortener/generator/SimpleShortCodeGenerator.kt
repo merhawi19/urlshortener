@@ -19,7 +19,6 @@ class SimpleShortCodeGenerator (    props: ShortCodeProperties
 
 
     override fun generateUniqueCode(source: UrlRepository, maxAttempts: Int): String {
-        println("generate unique code")
         repeat(maxAttempts) { attempt ->
             val length = defaultLength + (attempt / step)
             val code = randomBase62(length)

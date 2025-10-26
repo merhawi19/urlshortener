@@ -18,8 +18,10 @@ class InMemoryShortCodeGenerator(
         .build<String, Boolean>()
 
     private val step = props.lengthIncrementStep
-
-    override fun generateUniqueCode(source: Unit, maxAttempts: Int): String {
+     open override fun randomBase62(length: Int): String {
+        return super.randomBase62(length)
+    }
+     override fun generateUniqueCode(source: Unit, maxAttempts: Int): String {
         repeat(maxAttempts) { attempt ->
             val len = defaultLength + (attempt / step)
             val code = randomBase62(len)
@@ -29,5 +31,19 @@ class InMemoryShortCodeGenerator(
             }
         }
         throw IllegalStateException("Failed to generate unique short code after $maxAttempts attempts")
+    }
+
+    /**
+     * Pre-reserve a code (for tests or debugging) — simulates collision.
+     */
+    fun reserve(code: String) {
+        cache.put(code, true)
+    }
+
+    /**
+     * Clears all reserved codes (useful for unit tests).
+     */
+    fun clear() {
+        cache.invalidateAll()
     }
 }

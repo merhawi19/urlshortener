@@ -12,7 +12,7 @@ abstract class BaseShortCodeGenerator<T>(
 
     private val alphabetSize = alphabet.length
 
-    protected fun randomBase62(length: Int = defaultLength): String {
+    protected open fun randomBase62(length: Int = defaultLength): String {
         val bytes = ByteArray(length)
         RANDOM.nextBytes(bytes)
         val chars = CharArray(length)

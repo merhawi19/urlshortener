@@ -27,12 +27,13 @@ class UrlControllerIntegrationTest(
 
     @BeforeEach
     fun cleanup() {
-        repo.deleteAll() // extra safeguard
+        repo.deleteAll()
     }
 
     @Test
     fun `POST shorten should create short URL`() {
-        val request = ShortenRequest(originalUrl = "https://example.org")
+        val uniqueUrl = "https://example.org/${System.currentTimeMillis()}"
+        val request = ShortenRequest(originalUrl = uniqueUrl)
 
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/shorten")
@@ -40,10 +41,9 @@ class UrlControllerIntegrationTest(
                 .content(objectMapper.writeValueAsString(request))
         )
             .andExpect(MockMvcResultMatchers.status().isCreated)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.originalUrl").value("https://example.org"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.originalUrl").value(uniqueUrl))
             .andExpect(MockMvcResultMatchers.jsonPath("$.shortCode").exists())
     }
-
     @Test
     fun `GET info should return URL details`() {
         val code = "info${Random.Default.nextInt(1000,9999)}"
